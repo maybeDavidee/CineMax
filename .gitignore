@@ -1,0 +1,6 @@
+bin/
+*.class
+.settings/
+*.log
+.DS_Store
+Thumbs.db
