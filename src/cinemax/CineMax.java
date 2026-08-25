@@ -1,8 +1,8 @@
 /*
  * Autori:
- * Davide Gallorini - Matricola: DA INSERIRE - Sede: VA
- * Lorenzo Guidi - Matricola: DA INSERIRE - Sede: VA
- * Alberto Medizza - Matricola: DA INSERIRE - Sede: VA
+ * Davide Gallorini - Matricola: 766972 - Sede: VA
+ * Lorenzo Guidi - Matricola: 766939 - Sede: VA
+ * Alberto Medizza - Matricola: 765253 - Sede: VA
  */
 
 package cinemax;
@@ -267,11 +267,10 @@ public class CineMax {
         LocalDate dataNascita =
                 InputUtils.leggiData(
                         scanner,
-                        "Data di nascita "
-                        + "(gg/MM/aaaa, invio per omettere): ",
-                        true
+                        "Data di nascita (gg/MM/aaaa): ",
+                        false
                 );
-
+        
         String domicilio =
                 InputUtils.leggiStringaNonVuota(
                         scanner,
@@ -652,6 +651,13 @@ public class CineMax {
     	            + disponibili
     	            + "/"
     	            + Proiezione.CAPIENZA_SALA);
+    	    
+    	    if (disponibili <= 0) {
+    	        System.out.println(
+    	                "La proiezione è esaurita."
+    	        );
+    	        return;
+    	    }
 
     	    int numeroBiglietti =
     	            InputUtils.leggiIntero(
@@ -869,6 +875,10 @@ public class CineMax {
     	        System.out.println(
     	                "5. Elimina una proiezione"
     	        );
+    	        
+    	        System.out.println(
+    	                "6. Ricerca avanzata"
+    	        );
 
     	        System.out.println("0. Logout");
 
@@ -876,7 +886,7 @@ public class CineMax {
     	                scanner,
     	                "Scelta: ",
     	                0,
-    	                5
+    	                6
     	        );
 
     	        switch (scelta) {
@@ -900,6 +910,10 @@ public class CineMax {
 
     	            case 5:
     	                eliminaProiezione();
+    	                break;
+    	                
+    	            case 6:
+    	                ricercaAvanzataProiezioni();
     	                break;
 
     	            case 0:
@@ -1144,6 +1158,103 @@ public class CineMax {
     	        default:
     	            break;
     	    }
+    	}
+    	
+    	/**
+    	 * Permette al proiezionista di cercare proiezioni
+    	 * combinando più criteri contemporaneamente.
+    	 *
+    	 * I campi lasciati vuoti vengono ignorati.
+    	 */
+    	private static void ricercaAvanzataProiezioni() {
+
+    	    System.out.println(
+    	            "\n===== RICERCA AVANZATA ====="
+    	    );
+
+    	    System.out.print(
+    	            "Titolo o parte del titolo "
+    	            + "(Invio per ignorare): "
+    	    );
+    	    String titolo = scanner.nextLine().trim();
+
+    	    if (titolo.isEmpty()) {
+    	        titolo = null;
+    	    }
+
+    	    System.out.print(
+    	            "Genere "
+    	            + "(Invio per ignorare): "
+    	    );
+    	    String genere = scanner.nextLine().trim();
+
+    	    if (genere.isEmpty()) {
+    	        genere = null;
+    	    }
+
+    	    LocalDate dataInizio =
+    	            InputUtils.leggiData(
+    	                    scanner,
+    	                    "Data iniziale "
+    	                    + "(gg/MM/aaaa, Invio per ignorare): ",
+    	                    true
+    	            );
+
+    	    LocalDate dataFine =
+    	            InputUtils.leggiData(
+    	                    scanner,
+    	                    "Data finale "
+    	                    + "(gg/MM/aaaa, Invio per ignorare): ",
+    	                    true
+    	            );
+
+    	    if (dataInizio != null
+    	            && dataFine != null
+    	            && dataFine.isBefore(dataInizio)) {
+
+    	        System.out.println(
+    	                "La data finale non può precedere "
+    	                + "quella iniziale."
+    	        );
+    	        return;
+    	    }
+
+    	    Double prezzoMinimo =
+    	            InputUtils.leggiDoubleFacoltativo(
+    	                    scanner,
+    	                    "Prezzo minimo "
+    	                    + "(Invio per ignorare): "
+    	            );
+
+    	    Double prezzoMassimo =
+    	            InputUtils.leggiDoubleFacoltativo(
+    	                    scanner,
+    	                    "Prezzo massimo "
+    	                    + "(Invio per ignorare): "
+    	            );
+
+    	    if (prezzoMinimo != null
+    	            && prezzoMassimo != null
+    	            && prezzoMassimo < prezzoMinimo) {
+
+    	        System.out.println(
+    	                "Il prezzo massimo non può essere "
+    	                + "minore di quello minimo."
+    	        );
+    	        return;
+    	    }
+
+    	    List<Proiezione> risultati =
+    	            proiezioneService.cercaProiezioni(
+    	                    titolo,
+    	                    genere,
+    	                    dataInizio,
+    	                    dataFine,
+    	                    prezzoMinimo,
+    	                    prezzoMassimo
+    	            );
+
+    	    mostraProiezioni(risultati);
     	}
     		
     	/**

@@ -1,8 +1,8 @@
 /*
  * Autori:
- * Davide Gallorini - Matricola: DA INSERIRE - Sede: VA
- * Lorenzo Guidi - Matricola: DA INSERIRE - Sede: VA
- * Alberto Medizza - Matricola: DA INSERIRE - Sede: VA
+ * Davide Gallorini - Matricola: 766972 - Sede: VA
+ * Lorenzo Guidi - Matricola: 766939 - Sede: VA
+ * Alberto Medizza - Matricola: 765253 - Sede: VA
  */
 
 package cinemax.persistence;
@@ -39,7 +39,8 @@ public class ProiezioneRepository {
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private static final String INTESTAZIONE =
-            "data_ora_proiezione,"
+            "codice_proiezione,"
+            + "data_ora_proiezione,"
             + "titolo_film,"
             + "genere,"
             + "regista,"
@@ -80,7 +81,10 @@ public class ProiezioneRepository {
             while ((riga = reader.readLine()) != null) {
                 numeroRiga++;
 
-                if (numeroRiga == 1 && riga.startsWith("data_ora")) {
+                if (numeroRiga == 1
+                        && (riga.startsWith("data_ora")
+                        || riga.startsWith("codice_proiezione"))) {
+
                     continue;
                 }
 
@@ -203,30 +207,50 @@ public class ProiezioneRepository {
             String riga,
             int numeroProiezione) {
 
-        List<String> campi = separaCampiCsv(riga);
+    	List<String> campi = separaCampiCsv(riga);
 
-        if (campi.size() != 8) {
-            throw new IllegalArgumentException(
-                    "numero di campi errato: " + campi.size()
-            );
-        }
+    	if (campi.size() != 8 && campi.size() != 9) {
+    	    throw new IllegalArgumentException(
+    	            "numero di campi errato: " + campi.size()
+    	    );
+    	}
 
+    	boolean nuovoFormato = campi.size() == 9;
+
+    	int offset = nuovoFormato ? 1 : 0;
+
+    	String codice;
+
+    	if (nuovoFormato) {
+    	    codice = campi.get(0).trim();
+    	} else {
+    	    codice = CodiceUtils.generaCodiceProiezione(
+    	            numeroProiezione
+    	    );
+    	}
         try {
-            LocalDateTime dataOra = LocalDateTime.parse(
-                    campi.get(0),
-                    FORMATO_DATA_ORA
-            );
+        	LocalDateTime dataOra = LocalDateTime.parse(
+        	        campi.get(offset),
+        	        FORMATO_DATA_ORA
+        	);
 
-            String titolo = campi.get(1);
-            String genere = campi.get(2);
-            String regista = campi.get(3);
-            int anno = Integer.parseInt(campi.get(4));
-            int durata = Integer.parseInt(campi.get(5));
-            int etaMinima = Integer.parseInt(campi.get(6));
+        	String titolo = campi.get(offset + 1);
+        	String genere = campi.get(offset + 2);
+        	String regista = campi.get(offset + 3);
 
-            double prezzo = Double.parseDouble(
-                    campi.get(7).replace(',', '.')
-            );
+        	int anno =
+        	        Integer.parseInt(campi.get(offset + 4));
+
+        	int durata =
+        	        Integer.parseInt(campi.get(offset + 5));
+
+        	int etaMinima =
+        	        Integer.parseInt(campi.get(offset + 6));
+
+        	double prezzo = Double.parseDouble(
+        	        campi.get(offset + 7)
+        	                .replace(',', '.')
+        	);
 
             Film film = new Film(
                     titolo,
@@ -237,10 +261,7 @@ public class ProiezioneRepository {
                     etaMinima
             );
 
-            String codice =
-                    CodiceUtils.generaCodiceProiezione(
-                            numeroProiezione
-                    );
+           
 
             return new Proiezione(
                     codice,
@@ -269,8 +290,13 @@ public class ProiezioneRepository {
         Film film = proiezione.getFilm();
 
         return formattaCampoCsv(
-                proiezione.getDataOra().format(FORMATO_DATA_ORA)
+                proiezione.getCodice()
         )
+                + ","
+                + formattaCampoCsv(
+                        proiezione.getDataOra()
+                                .format(FORMATO_DATA_ORA)
+                )
                 + "," + formattaCampoCsv(film.getTitolo())
                 + "," + formattaCampoCsv(film.getGenere())
                 + "," + formattaCampoCsv(film.getRegista())

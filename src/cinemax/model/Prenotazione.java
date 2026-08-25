@@ -1,8 +1,8 @@
 /*
  * Autori:
- * Davide Gallorini - Matricola: DA INSERIRE - Sede: VA
- * Lorenzo Guidi - Matricola: DA INSERIRE - Sede: VA
- * Alberto Medizza - Matricola: DA INSERIRE - Sede: VA
+ * Davide Gallorini - Matricola: 766972 - Sede: VA
+ * Lorenzo Guidi - Matricola: 766939 - Sede: VA
+ * Alberto Medizza - Matricola: 765253 - Sede: VA
  */
 
 package cinemax.model;

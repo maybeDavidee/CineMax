@@ -1,8 +1,8 @@
 /*
  * Autori:
- * Davide Gallorini - Matricola: DA INSERIRE - Sede: VA
- * Lorenzo Guidi - Matricola: DA INSERIRE - Sede: VA
- * Alberto Medizza - Matricola: DA INSERIRE - Sede: VA
+ * Davide Gallorini - Matricola: 766972 - Sede: VA
+ * Lorenzo Guidi - Matricola: 766939 - Sede: VA
+ * Alberto Medizza - Matricola: 765253 - Sede: VA
  */
 
 package cinemax.utils;
@@ -229,6 +229,48 @@ public final class InputUtils {
             System.out.println(
                     "Risposta non valida. Inserisci s oppure n."
             );
+        }
+    }
+    /**
+     * Legge un numero decimale facoltativo.
+     * Se l'utente preme invio senza inserire nulla,
+     * restituisce null.
+     *
+     * @param scanner scanner usato per l'input
+     * @param messaggio messaggio mostrato all'utente
+     * @return valore inserito oppure null
+     */
+    public static Double leggiDoubleFacoltativo(
+            Scanner scanner,
+            String messaggio) {
+
+        while (true) {
+            System.out.print(messaggio);
+
+            String input = scanner.nextLine()
+                    .trim()
+                    .replace(',', '.');
+
+            if (input.isEmpty()) {
+                return null;
+            }
+
+            try {
+                double valore = Double.parseDouble(input);
+
+                if (valore >= 0) {
+                    return valore;
+                }
+
+                System.out.println(
+                        "Il valore non può essere negativo."
+                );
+
+            } catch (NumberFormatException e) {
+                System.out.println(
+                        "Devi inserire un numero valido oppure premere Invio."
+                );
+            }
         }
     }
 }

@@ -1,13 +1,14 @@
 /*
  * Autori:
- * Davide Gallorini - Matricola: DA INSERIRE - Sede: VA
- * Lorenzo Guidi - Matricola: DA INSERIRE - Sede: VA
- * Alberto Medizza - Matricola: DA INSERIRE - Sede: VA
+ * Davide Gallorini - Matricola: 766972 - Sede: VA
+ * Lorenzo Guidi - Matricola: 766939 - Sede: VA
+ * Alberto Medizza - Matricola: 765253 - Sede: VA
  */
 
 package cinemax.service;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,8 +30,6 @@ import cinemax.utils.CodiceUtils;
 public class PrenotazioneService {
 
     private final PrenotazioneRepository repository;
-    private final AuthService authService;
-    private final ProiezioneService proiezioneService;
     private final List<Prenotazione> prenotazioni;
 
     /**
@@ -55,8 +54,7 @@ public class PrenotazioneService {
         }
 
         this.repository = repository;
-        this.authService = authService;
-        this.proiezioneService = proiezioneService;
+       
 
         this.prenotazioni = new ArrayList<>(
                 repository.caricaTutte(
@@ -166,12 +164,29 @@ public class PrenotazioneService {
             return null;
         }
 
-       /* if (proiezione.getDataOra()
-                .isBefore(LocalDateTime.now())) {
+        if (!proiezione.getDataOra()
+                .isAfter(LocalDateTime.now())) {
 
             return null;
         }
-       */
+        
+        if (cliente.getDataNascita() == null) {
+            return null;
+        }
+
+        LocalDate dataProiezione =
+                proiezione.getDataOra().toLocalDate();
+
+        int etaCliente =
+                Period.between(
+                        cliente.getDataNascita(),
+                        dataProiezione
+                ).getYears();
+
+        if (etaCliente < proiezione.getFilm().getEtaMinima()) {
+            return null;
+        }
+        
         int postiDisponibili =
                 getPostiDisponibili(proiezione);
 
@@ -386,10 +401,14 @@ public class PrenotazioneService {
         LocalDate oggi = LocalDate.now();
 
         for (Prenotazione prenotazione : prenotazioni) {
-            LocalDate dataCreazione =
-                    prenotazione.getDataCreazione().toLocalDate();
 
-            if (dataCreazione.equals(oggi)) {
+            LocalDate dataProiezione =
+                    prenotazione
+                            .getProiezione()
+                            .getDataOra()
+                            .toLocalDate();
+
+            if (dataProiezione.equals(oggi)) {
                 risultati.add(prenotazione);
             }
         }
@@ -420,14 +439,14 @@ public class PrenotazioneService {
         Proiezione vecchiaProiezione =
                 prenotazione.getProiezione();
 
-        /*LocalDateTime adesso = LocalDateTime.now();
+        LocalDateTime adesso = LocalDateTime.now();
 
         if (!vecchiaProiezione.getDataOra().isAfter(adesso)
                 || !nuovaProiezione.getDataOra().isAfter(adesso)) {
 
             return false;
         }
-		*/
+		
         if (stessaProiezione(
                 vecchiaProiezione,
                 nuovaProiezione)) {
