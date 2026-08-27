@@ -462,14 +462,16 @@ public class CineMax {
 
     		while (menuAttivo) {
 
-    		    System.out.println("\n===== MENU CLIENTE =====");
-    		    System.out.println("2. Cerca proiezione per titolo");
-    		    System.out.println("3. Prenota biglietti");
-    		    System.out.println("4. Le mie prenotazioni");
-    		    System.out.println("5. Modifica prenotazione");
-    		    System.out.println("6. Elimina prenotazione");
-    		    System.out.println("0. Logout");
-
+    			System.out.println("\n===== MENU CLIENTE =====");
+    			System.out.println(
+    			        "1. Visualizza le proiezioni future"
+    			);
+    			System.out.println("2. Cerca proiezione per titolo");
+    			System.out.println("3. Prenota biglietti");
+    			System.out.println("4. Le mie prenotazioni");
+    			System.out.println("5. Modifica prenotazione");
+    			System.out.println("6. Elimina prenotazione");
+    			System.out.println("0. Logout");
     		    int scelta = InputUtils.leggiIntero(
     		            scanner,
     		            "Scelta: ",
@@ -674,10 +676,13 @@ public class CineMax {
 
     	    if (prenotazione == null) {
     	        System.out.println(
-    	                "Prenotazione non riuscita.");
+    	                "Prenotazione non riuscita. "
+    	                + "Controlla che la proiezione sia futura, "
+    	                + "che l'età minima sia rispettata "
+    	                + "e che ci siano posti disponibili."
+    	        );
     	        return;
     	    }
-
     	    System.out.println();
     	    System.out.println(
     	            "Prenotazione effettuata con successo!");
@@ -823,10 +828,10 @@ public class CineMax {
     	        );
 
     	        System.out.println(
-    	                "Controlla che entrambe le proiezioni "
-    	                + "siano future e che vi siano posti disponibili."
+    	                "Controlla che entrambe le proiezioni siano future, "
+    	                + "che l'età minima sia rispettata "
+    	                + "e che vi siano posti disponibili."
     	        );
-
     	        return;
     	    }
 
