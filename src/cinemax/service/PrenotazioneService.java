@@ -446,6 +446,29 @@ public class PrenotazioneService {
 
             return false;
         }
+        
+        Cliente cliente = prenotazione.getCliente();
+
+        if (cliente == null
+                || cliente.getDataNascita() == null) {
+
+            return false;
+        }
+
+        LocalDate dataNuovaProiezione =
+                nuovaProiezione.getDataOra().toLocalDate();
+
+        int etaCliente =
+                Period.between(
+                        cliente.getDataNascita(),
+                        dataNuovaProiezione
+                ).getYears();
+
+        if (etaCliente
+                < nuovaProiezione.getFilm().getEtaMinima()) {
+
+            return false;
+        }
 		
         if (stessaProiezione(
                 vecchiaProiezione,

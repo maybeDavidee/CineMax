@@ -83,7 +83,7 @@ public class AuthService {
      * @param cognome cognome del cliente
      * @param username username scelto
      * @param password password in chiaro
-     * @param dataNascita data di nascita facoltativa
+     * @param dataNascita data di nascita obbligatoria
      * @param domicilio domicilio del cliente
      * @return cliente registrato oppure null
      */
@@ -101,6 +101,12 @@ public class AuthService {
                 username,
                 password,
                 domicilio)) {
+
+            return null;
+        }
+        
+        if (dataNascita == null
+                || dataNascita.isAfter(LocalDate.now())) {
 
             return null;
         }

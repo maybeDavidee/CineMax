@@ -32,6 +32,13 @@ Da Eclipse:
 
 All'avvio vengono caricati automaticamente utenti, proiezioni e prenotazioni presenti nella cartella `data`.
 
+### Avvio rapido su Windows
+
+Fare doppio clic su `AvviaCineMax.bat`.
+
+Il file avvia automaticamente `CineMax.jar` dalla cartella corretta,
+permettendo al programma di trovare i file presenti in `data/`.
+
 ## Struttura del progetto
 
 `src/`

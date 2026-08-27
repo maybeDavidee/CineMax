@@ -8,3 +8,4 @@ Federico;Galli;bigliettaio5;32416fc6b22f642ff73e152500134e5781f82a78314572207f15
 Davide;Gallorini;dgallo;87199cee124d23fc14891e3703d8c499fedf16440f85570461eea890ec536b83;2006-12-08;Busto Garolfo;cliente
 Lorenzo;Guidi;lguidi;a2bd594042589e26a800de3eb1d8c4ef259477aaabb835989c975d1eff4db882;2005-11-19;Cerro Maggiore;cliente
 
+Sofia;Allegretti;asofia;60fc0cae7a6c061dd73094cc402946f65fcf3a2765a86d4c0c667df29a1e22d4;2008-10-06;Bergamo;cliente

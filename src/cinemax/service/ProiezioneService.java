@@ -52,6 +52,28 @@ public class ProiezioneService {
     public List<Proiezione> getProiezioni() {
         return new ArrayList<>(proiezioni);
     }
+    
+    /**
+     * Restituisce soltanto le proiezioni future,
+     * ordinate cronologicamente.
+     *
+     * @return lista delle proiezioni future
+     */
+    public List<Proiezione> getProiezioniFuture() {
+        List<Proiezione> risultati =
+                new ArrayList<>();
+
+        LocalDateTime adesso =
+                LocalDateTime.now();
+
+        for (Proiezione proiezione : proiezioni) {
+            if (proiezione.getDataOra().isAfter(adesso)) {
+                risultati.add(proiezione);
+            }
+        }
+
+        return risultati;
+    }
 
     /**
      * Cerca una proiezione tramite il suo codice.
@@ -149,6 +171,34 @@ public class ProiezioneService {
                 null,
                 null
         );
+    }
+    
+    /**
+     * Cerca proiezioni future per titolo,
+     * anche parziale.
+     *
+     * @param titolo titolo da cercare
+     * @return lista delle proiezioni future trovate
+     */
+    public List<Proiezione> cercaPerTitoloFuture(
+            String titolo) {
+
+        List<Proiezione> risultati =
+                cercaPerTitolo(titolo);
+
+        List<Proiezione> future =
+                new ArrayList<>();
+
+        LocalDateTime adesso =
+                LocalDateTime.now();
+
+        for (Proiezione proiezione : risultati) {
+            if (proiezione.getDataOra().isAfter(adesso)) {
+                future.add(proiezione);
+            }
+        }
+
+        return future;
     }
 
     /**

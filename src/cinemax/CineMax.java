@@ -316,7 +316,7 @@ public class CineMax {
                     "1. Cercare proiezioni per titolo"
             );
             System.out.println(
-                    "2. Visualizzare tutte le proiezioni"
+                    "2. Visualizzare le proiezioni future"
             );
             System.out.println("0. Torna indietro");
 
@@ -335,7 +335,7 @@ public class CineMax {
                 case 2:
                     mostraProiezioni(
                             proiezioneService
-                                    .getProiezioni()
+                            .getProiezioniFuture()
                     );
                     break;
 
@@ -362,7 +362,7 @@ public class CineMax {
 
         List<Proiezione> risultati =
                 proiezioneService
-                        .cercaPerTitolo(titolo);
+                        .cercaPerTitoloFuture(titolo);
 
         mostraProiezioni(risultati);
     }
@@ -453,22 +453,16 @@ public class CineMax {
     }
 
     /**
-     * Menu provvisorio del cliente.
-     *
-     * Le funzionalità verranno aggiunte
-     * nel passaggio successivo.
+     * Mostra il menu riservato ai clienti.
      *
      * @param cliente cliente autenticato
      */
     private static void menuCliente(Cliente cliente) {
     	boolean menuAttivo = true;
 
-    	while (menuAttivo) {
-
     		while (menuAttivo) {
 
     		    System.out.println("\n===== MENU CLIENTE =====");
-    		    System.out.println("1. Visualizza tutte le proiezioni");
     		    System.out.println("2. Cerca proiezione per titolo");
     		    System.out.println("3. Prenota biglietti");
     		    System.out.println("4. Le mie prenotazioni");
@@ -485,11 +479,11 @@ public class CineMax {
 
     		    switch (scelta) {
 
-    		        case 1:
-    		            mostraProiezioni(
-    		                    proiezioneService.getProiezioni()
-    		            );
-    		            break;
+    		    case 1:
+    		        mostraProiezioni(
+    		                proiezioneService.getProiezioniFuture()
+    		        );
+    		        break;
 
     		        case 2:
     		            ricercaGuestPerTitolo();
@@ -520,7 +514,7 @@ public class CineMax {
     		    }
     		}
     	}
-    }
+    
     
     /**
      * Permette al cliente di eliminare una propria prenotazione.
