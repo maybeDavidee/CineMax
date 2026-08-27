@@ -7,6 +7,11 @@
 
 package cinemax;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +52,16 @@ public class CineMax {
      * @param args argomenti della riga di comando
      */
     public static void main(String[] args) {
+		impostaConsoleUtf8();
+
+		System.setOut(
+			new PrintStream(
+				new FileOutputStream(FileDescriptor.out),
+				true,
+				StandardCharsets.UTF_8
+			)
+		);
+
         scanner = new Scanner(System.in);
 
         inizializzaApplicazione();
@@ -61,6 +76,28 @@ public class CineMax {
 
         System.out.println("\nApplicazione terminata.");
     }
+
+	/**
+	 * Imposta la code page UTF-8 della console Windows.
+	 */
+	private static void impostaConsoleUtf8() {
+		if (!System.getProperty("os.name")
+				.toLowerCase()
+				.contains("win")) {
+			return;
+		}
+
+		try {
+			new ProcessBuilder("cmd.exe", "/c", "chcp 65001 > nul")
+					.inheritIO()
+					.start()
+					.waitFor();
+		} catch (IOException e) {
+			return;
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+	}
 
     /**
      * Crea i repository e i servizi utilizzati
@@ -428,7 +465,7 @@ public class CineMax {
             );
 
             System.out.printf(
-                    "Prezzo: %.2f €%n",
+					"Prezzo: %.2f \u20AC%n",
                     proiezione.getPrezzoBiglietto()
             );
 
@@ -698,7 +735,7 @@ public class CineMax {
     	            + prenotazione.getCodice());
 
     	    System.out.printf(
-    	            "Totale: %.2f €%n",
+		            "Totale: %.2f \u20AC%n",
     	            prenotazione.getCostoTotale());
     	}
 

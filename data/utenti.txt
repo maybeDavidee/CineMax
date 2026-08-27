@@ -10,3 +10,4 @@ Lorenzo;Guidi;lguidi;a2bd594042589e26a800de3eb1d8c4ef259477aaabb835989c975d1eff4
 
 Sofia;Allegretti;asofia;60fc0cae7a6c061dd73094cc402946f65fcf3a2765a86d4c0c667df29a1e22d4;2008-10-06;Bergamo;cliente
 Alberto;Medizza;Albe29;b78fa902d7db00f4a1e379899567bb187a896ffd575fedd7d4c0cf7f414cd9f7;2006-06-29;VA;cliente
+Mario;Rossi;MR99;8dd5da56cd6807185e058a3b03c2aef016549c738a0bf824f7073597f21cdcb9;1999-01-01;VA;cliente

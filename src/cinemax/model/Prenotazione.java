@@ -225,11 +225,11 @@ public class Prenotazione {
                 + (posti.isEmpty() ? "non specificati" : String.join(", ", posti))
                 + "\nCosto unitario: "
                 + String.format(
-                        "%.2f €",
+                        "%.2f \u20AC",
                         proiezione.getPrezzoBiglietto()
                 )
                 + "\nCosto totale: "
-                + String.format("%.2f €", getCostoTotale())
+                + String.format("%.2f \u20AC", getCostoTotale())
                 + "\nPrenotazione creata il: "
                 + dataCreazione.format(formato);
     }

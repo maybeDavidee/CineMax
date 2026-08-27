@@ -206,6 +206,6 @@ public class Proiezione {
                 + "\n" + film
                 + "\nData e ora: " + dataOra.format(formato)
                 + "\nPrezzo biglietto: "
-                + String.format("%.2f €", prezzoBiglietto);
+                + String.format("%.2f \u20AC", prezzoBiglietto);
     }
 }  
