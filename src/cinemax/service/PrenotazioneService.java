@@ -12,6 +12,7 @@ import java.time.Period;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 import cinemax.model.Cliente;
@@ -115,6 +116,48 @@ public class PrenotazioneService {
     }
 
     /**
+     * Restituisce i posti ancora selezionabili per una proiezione.
+     *
+     * @param proiezione proiezione da controllare
+     * @return posti liberi ordinati per riga e colonna
+     */
+    public List<String> getPostiDisponibiliDettaglio(
+            Proiezione proiezione) {
+
+        List<String> disponibili = Proiezione.getPostiSala();
+        int prenotazioniSenzaPosto = 0;
+
+        for (Prenotazione prenotazione : prenotazioni) {
+            if (!stessaProiezione(
+                    prenotazione.getProiezione(),
+                    proiezione)) {
+                continue;
+            }
+
+            if (prenotazione.getPosti().isEmpty()) {
+                prenotazioniSenzaPosto +=
+                        prenotazione.getNumeroBiglietti();
+            } else {
+                disponibili.removeAll(prenotazione.getPosti());
+            }
+        }
+
+        if (prenotazioniSenzaPosto > 0) {
+            disponibili = new ArrayList<>(
+                    disponibili.subList(
+                            Math.min(
+                                    prenotazioniSenzaPosto,
+                                    disponibili.size()
+                            ),
+                            disponibili.size()
+                    )
+            );
+        }
+
+        return disponibili;
+    }
+
+    /**
      * Verifica se una proiezione possiede almeno
      * una prenotazione.
      *
@@ -157,9 +200,38 @@ public class PrenotazioneService {
             Proiezione proiezione,
             int numeroBiglietti) {
 
+        List<String> postiDisponibili =
+            getPostiDisponibiliDettaglio(proiezione);
+
+        if (numeroBiglietti <= 0
+            || numeroBiglietti > postiDisponibili.size()) {
+            return null;
+        }
+
+        return creaPrenotazione(
+            cliente,
+            proiezione,
+            postiDisponibili.subList(0, numeroBiglietti)
+        );
+        }
+
+        /**
+         * Crea una prenotazione assegnando i posti scelti dal cliente.
+         *
+         * @param cliente cliente che prenota
+         * @param proiezione proiezione scelta
+         * @param posti posti selezionati
+         * @return prenotazione creata oppure null
+         */
+        public Prenotazione creaPrenotazione(
+            Cliente cliente,
+            Proiezione proiezione,
+            List<String> posti) {
+
         if (cliente == null
                 || proiezione == null
-                || numeroBiglietti <= 0) {
+            || posti == null
+            || posti.isEmpty()) {
 
             return null;
         }
@@ -188,9 +260,21 @@ public class PrenotazioneService {
         }
         
         int postiDisponibili =
-                getPostiDisponibili(proiezione);
+            getPostiDisponibiliDettaglio(proiezione).size();
 
-        if (numeroBiglietti > postiDisponibili) {
+        List<String> postiNormalizzati = new ArrayList<>();
+        for (String posto : posti) {
+            if (posto == null) {
+            return null;
+            }
+            postiNormalizzati.add(posto.trim().toUpperCase());
+        }
+
+        if (postiNormalizzati.size() > postiDisponibili
+            || new HashSet<>(postiNormalizzati).size()
+                != postiNormalizzati.size()
+            || !getPostiDisponibiliDettaglio(proiezione)
+                .containsAll(postiNormalizzati)) {
             return null;
         }
 
@@ -201,7 +285,8 @@ public class PrenotazioneService {
                         codice,
                         cliente,
                         proiezione,
-                        numeroBiglietti,
+                        postiNormalizzati.size(),
+                        postiNormalizzati,
                         LocalDateTime.now()
                 );
 
@@ -507,9 +592,8 @@ public class PrenotazioneService {
     /**
      * Elimina una prenotazione.
      *
-     * La specifica del docente indica che la cancellazione
-     * è permessa quando la data della proiezione è precedente
-     * alla data odierna.
+      * La cancellazione è permessa finché la proiezione
+      * non è ancora iniziata.
      *
      * @param prenotazione prenotazione da eliminare
      * @return true se l'eliminazione è riuscita
@@ -521,13 +605,10 @@ public class PrenotazioneService {
             return false;
         }
 
-        LocalDate dataProiezione =
-                prenotazione
-                        .getProiezione()
-                        .getDataOra()
-                        .toLocalDate();
-
-        if (!dataProiezione.isBefore(LocalDate.now())) {
+        if (!prenotazione
+                .getProiezione()
+                .getDataOra()
+                .isAfter(LocalDateTime.now())) {
             return false;
         }
 

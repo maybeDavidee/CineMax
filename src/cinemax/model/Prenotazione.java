@@ -6,6 +6,9 @@
  */
 
 package cinemax.model;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -19,6 +22,7 @@ public class Prenotazione {
     private Cliente cliente;
     private Proiezione proiezione;
     private int numeroBiglietti;
+    private List<String> posti;
     private LocalDateTime dataCreazione;
 
     /**
@@ -37,10 +41,39 @@ public class Prenotazione {
             int numeroBiglietti,
             LocalDateTime dataCreazione) {
 
+        this(
+                codice,
+                cliente,
+                proiezione,
+                numeroBiglietti,
+                Collections.emptyList(),
+                dataCreazione
+        );
+    }
+
+    /**
+     * Costruisce una prenotazione con i posti selezionati.
+     *
+     * @param codice codice univoco della prenotazione
+     * @param cliente cliente che effettua la prenotazione
+     * @param proiezione proiezione scelta
+     * @param numeroBiglietti numero di biglietti richiesti
+     * @param posti posti assegnati nella sala
+     * @param dataCreazione data e ora di creazione
+     */
+    public Prenotazione(
+            String codice,
+            Cliente cliente,
+            Proiezione proiezione,
+            int numeroBiglietti,
+            List<String> posti,
+            LocalDateTime dataCreazione) {
+
         this.codice = codice;
         this.cliente = cliente;
         this.proiezione = proiezione;
         this.numeroBiglietti = numeroBiglietti;
+        this.posti = new ArrayList<>(posti);
         this.dataCreazione = dataCreazione;
     }
 
@@ -133,6 +166,15 @@ public class Prenotazione {
     }
 
     /**
+     * Restituisce i posti assegnati alla prenotazione.
+     *
+     * @return lista dei posti assegnati
+     */
+    public List<String> getPosti() {
+        return Collections.unmodifiableList(posti);
+    }
+
+    /**
      * Calcola il costo totale della prenotazione.
      *
      * @return costo totale
@@ -179,6 +221,8 @@ public class Prenotazione {
                 + "\nData proiezione: "
                 + proiezione.getDataOra().format(formato)
                 + "\nNumero biglietti: " + numeroBiglietti
+                + "\nPosti: "
+                + (posti.isEmpty() ? "non specificati" : String.join(", ", posti))
                 + "\nCosto unitario: "
                 + String.format(
                         "%.2f €",

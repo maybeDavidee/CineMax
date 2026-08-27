@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import cinemax.model.Cliente;
 import cinemax.model.Prenotazione;
@@ -191,7 +193,7 @@ public class PrenotazioneRepository {
 
         String[] campi = riga.split(";", -1);
 
-        if (campi.length != 5) {
+        if (campi.length < 5 || campi.length > 6) {
             throw new IllegalArgumentException(
                     "sono richiesti esattamente 5 campi"
             );
@@ -202,6 +204,12 @@ public class PrenotazioneRepository {
         String codiceProiezione = campi[2].trim();
         String numeroTesto = campi[3].trim();
         String dataTesto = campi[4].trim();
+        List<String> posti = campi.length == 6
+            ? Arrays.stream(campi[5].split(","))
+                .map(String::trim)
+                .filter(posto -> !posto.isEmpty())
+                .collect(Collectors.toList())
+            : new ArrayList<>();
 
         if (codice.isEmpty()
                 || username.isEmpty()
@@ -255,6 +263,7 @@ public class PrenotazioneRepository {
                     cliente,
                     proiezione,
                     numeroBiglietti,
+                        posti,
                     dataCreazione
             );
 
@@ -344,7 +353,9 @@ public class PrenotazioneRepository {
                 + ";"
                 + prenotazione.getNumeroBiglietti()
                 + ";"
-                + prenotazione.getDataCreazione();
+                + prenotazione.getDataCreazione()
+                + ";"
+                + String.join(",", prenotazione.getPosti());
     }
 
     /**

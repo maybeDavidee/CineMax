@@ -8,6 +8,7 @@
 package cinemax;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import cinemax.model.Bigliettaio;
@@ -521,8 +522,8 @@ public class CineMax {
     /**
      * Permette al cliente di eliminare una propria prenotazione.
      *
-     * Secondo le specifiche attuali, l'eliminazione è consentita
-     * soltanto se la proiezione è già passata.
+		 * L'eliminazione è consentita soltanto se la proiezione
+		 * non è ancora iniziata.
      *
      * @param cliente cliente autenticato
      */
@@ -604,7 +605,7 @@ public class CineMax {
 
             System.out.println(
                     "La prenotazione può essere eliminata "
-                    + "solo se la proiezione è già passata."
+				    + "solo prima dell'inizio della proiezione."
             );
 
             return;
@@ -662,17 +663,22 @@ public class CineMax {
     	                    1,
     	                    disponibili);
 
-    	    if (numeroBiglietti > disponibili) {
-    	        System.out.println(
-    	                "Non ci sono abbastanza posti.");
-    	        return;
-    	    }
+	    	List<String> postiDisponibili =
+	    	        prenotazioneService
+	    	                .getPostiDisponibiliDettaglio(proiezione);
+
+	    	List<String> postiSelezionati =
+	    	        selezionaPosti(
+	    	                proiezione,
+	    	                postiDisponibili,
+	    	                numeroBiglietti
+	    	        );
 
     	    Prenotazione prenotazione =
     	            prenotazioneService.creaPrenotazione(
     	                    cliente,
     	                    proiezione,
-    	                    numeroBiglietti);
+	    	            postiSelezionati);
 
     	    if (prenotazione == null) {
     	        System.out.println(
@@ -695,6 +701,95 @@ public class CineMax {
     	            "Totale: %.2f €%n",
     	            prenotazione.getCostoTotale());
     	}
+
+	/**
+	 * Mostra la mappa della sala e raccoglie i posti scelti.
+	 *
+	 * @param proiezione proiezione selezionata
+	 * @param postiDisponibili posti ancora liberi
+	 * @param numeroPosti numero di posti da selezionare
+	 * @return posti selezionati
+	 */
+	private static List<String> selezionaPosti(
+			Proiezione proiezione,
+			List<String> postiDisponibili,
+			int numeroPosti) {
+
+		List<String> selezionati = new ArrayList<>();
+
+		while (selezionati.size() < numeroPosti) {
+			System.out.println(
+					"\nMappa sala: O = libero, X = occupato, S = selezionato"
+			);
+			mostraMappaPosti(postiDisponibili, selezionati);
+
+			String posto = InputUtils.leggiPosto(
+					scanner,
+					"Seleziona posto "
+					+ (selezionati.size() + 1)
+					+ "/"
+					+ numeroPosti
+					+ ": "
+			);
+
+			if (!postiDisponibili.contains(posto)) {
+				System.out.println(
+						"Posto occupato o non disponibile."
+				);
+				continue;
+			}
+
+			if (selezionati.contains(posto)) {
+				System.out.println(
+						"Hai già selezionato questo posto."
+				);
+				continue;
+			}
+
+			selezionati.add(posto);
+		}
+
+		return selezionati;
+	}
+
+	/**
+	* Stampa la disposizione della sala in dieci righe e venti colonne.
+	 *
+	 * @param postiDisponibili posti liberi
+	 * @param postiSelezionati posti scelti durante l'input
+	 */
+	private static void mostraMappaPosti(
+			List<String> postiDisponibili,
+			List<String> postiSelezionati) {
+
+		System.out.print("    ");
+		for (int colonna = 1;
+				colonna <= Proiezione.COLONNE_SALA;
+				colonna++) {
+			System.out.printf("%3d", colonna);
+		}
+		System.out.println();
+
+		for (int riga = 0;
+				riga < Proiezione.RIGHE_SALA;
+				riga++) {
+			char nomeRiga = (char) ('A' + riga);
+			System.out.print(nomeRiga + "   ");
+
+			for (int colonna = 1;
+					colonna <= Proiezione.COLONNE_SALA;
+					colonna++) {
+				String posto = nomeRiga + String.valueOf(colonna);
+				String stato = postiSelezionati.contains(posto)
+						? "S"
+						: postiDisponibili.contains(posto)
+								? "O"
+								: "X";
+				System.out.printf("%3s", stato);
+			}
+			System.out.println();
+		}
+	}
     	
     	/**
     	 * Mostra tutte le prenotazioni effettuate

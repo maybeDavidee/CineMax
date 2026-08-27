@@ -125,6 +125,7 @@ I codici delle proiezioni e delle prenotazioni vengono mantenuti in modo da pote
 
 ## Note
 
-La capienza della sala è fissata a 200 posti.
+La sala ha 200 posti, organizzati in 10 righe (A-J) e 20 colonne.
+Durante la prenotazione il cliente può selezionare i posti disponibili.
 
 Il programma utilizza un'interfaccia testuale tramite console.

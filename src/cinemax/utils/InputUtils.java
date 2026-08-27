@@ -57,6 +57,31 @@ public final class InputUtils {
     }
 
     /**
+    * Legge un posto della sala nel formato A1-J20.
+     *
+     * @param scanner scanner usato per l'input
+     * @param messaggio messaggio mostrato all'utente
+     * @return codice del posto normalizzato
+     */
+    public static String leggiPosto(
+            Scanner scanner,
+            String messaggio) {
+
+        while (true) {
+            String posto = leggiStringaNonVuota(scanner, messaggio)
+                    .toUpperCase();
+
+            if (posto.matches("[A-J](?:[1-9]|1[0-9]|20)")) {
+                return posto;
+            }
+
+            System.out.println(
+                    "Posto non valido. Usa un codice tra A1 e J20."
+            );
+        }
+    }
+
+    /**
      * Legge un numero intero compreso tra minimo e massimo.
      *
      * @param scanner scanner usato per l'input

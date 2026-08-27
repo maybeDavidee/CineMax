@@ -9,6 +9,8 @@ package cinemax.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Rappresenta una proiezione cinematografica.
@@ -21,7 +23,26 @@ public class Proiezione {
     /**
      * Capienza massima della sala cinematografica.
      */
-    public static final int CAPIENZA_SALA = 200;
+    public static final int RIGHE_SALA = 10;
+    public static final int COLONNE_SALA = 20;
+    public static final int CAPIENZA_SALA = RIGHE_SALA * COLONNE_SALA;
+
+    /**
+     * Restituisce i codici di tutti i posti della sala.
+     *
+     * @return posti ordinati per riga e colonna
+     */
+    public static List<String> getPostiSala() {
+        List<String> posti = new ArrayList<>();
+
+        for (int riga = 0; riga < RIGHE_SALA; riga++) {
+            for (int colonna = 1; colonna <= COLONNE_SALA; colonna++) {
+                posti.add(String.valueOf((char) ('A' + riga)) + colonna);
+            }
+        }
+
+        return posti;
+    }
 
     private String codice;
     private Film film;
